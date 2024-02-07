@@ -15,8 +15,6 @@
 
       canvas {
         display: block;
-        width: 1920px;
-        height: 1080px;
         background-color: #000000;
       }
     </style>
@@ -26,10 +24,13 @@
 
       in vec2 position;
       uniform uint currentTimeMs;
+      uniform vec2 resolution;
       flat out uint vCurrentTimeMs;
+      out vec2 vResolution;
 
       void main() {
         vCurrentTimeMs = currentTimeMs;
+        vResolution = resolution;
         gl_Position = vec4(position, 0.0, 1.0);
       }
     </script>
@@ -39,6 +40,7 @@
 
       precision highp float;
       flat in uint vCurrentTimeMs;
+      in vec2 vResolution;
       out vec4 outColor;
 
       const float PI = 3.14159265;
@@ -79,7 +81,7 @@
     </script>
 
     <script id="fragment-shader-01" type="x-shader/x-fragment">
-      const vec3 lightDirection = normalize(vec3(1.0, 0.0, -1.0));
+      const vec3 lightDirection = normalize(vec3(0.0, 0.0, -1.0));
 
       float distanceFunc(vec3 position) {
         return length(mod(position, 4.0) - 2.0) - 1.0;
@@ -95,7 +97,7 @@
       }
 
       void main() {
-        vec2 fragmentPosition = (gl_FragCoord.xy - vec2(960.0, 540.0)) / vec2(960.0, 540.0);
+        vec2 fragmentPosition = (gl_FragCoord.xy * 2.0 - vResolution) / vResolution;
 
         float progress = float(vCurrentTimeMs % uint(4000)) / 4000.0;
 
@@ -107,22 +109,24 @@
           sin(PI * fragmentPosition.y * 0.5)
         ));
 
-        // ray = rotateYDegree(ray, 360.0 * progress);
+        ray = rotateYDegree(ray, 360.0 * progress);
 
         float distance = 0.0;
         float rayLength = 0.0;
         vec3 rayPosition = cameraPosition;
 
-        for (int i = 1; i < 64; i++) {
+        for (int i = 1; i < 32; i++) {
           distance = distanceFunc(rayPosition);
           rayLength = rayLength + distance;
           rayPosition = cameraPosition + ray * rayLength;
         }
 
+        float brightness = step(distance, 0.001) * clamp(dot(lightDirection, normalFunc(rayPosition)), 0.1, 1.0);
+
         outColor = vec4(
-          step(distance, 0.001) * clamp(dot(lightDirection, normalFunc(rayPosition)), 0.1, 1.0),
-          0.0,
-          0.0,
+          brightness,
+          brightness,
+          brightness,
           1.0
         );
       }
@@ -142,6 +146,6 @@
     </script>
   </head>
   <body>
-    <canvas class="canvas" id="canvas" width="1920" height="1080"></canvas>
+    <canvas class="canvas" id="canvas" width="2560" height="1440"></canvas>
   </body>
 </html>

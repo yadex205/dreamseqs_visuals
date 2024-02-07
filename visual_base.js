@@ -2,7 +2,9 @@
 
 class Visual {
   #gl;
+  #resolution;
   #currentTimeMsUniformPosition;
+  #resolutionUniformPosition;
   #intervalHandle = 0;
   #animationFrameHandle = 0;
 
@@ -15,6 +17,7 @@ class Visual {
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     this.#gl = gl;
+    this.#resolution = [canvasEl.width, canvasEl.height];
   }
 
   setShaderSourceCode = (vertexShaderSourceCode, fragmentShaderSourceCode) => {
@@ -43,7 +46,9 @@ class Visual {
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
     const currentTimeMsUniformPosition = gl.getUniformLocation(program, "currentTimeMs");
+    const resolutionUniformPosition = gl.getUniformLocation(program, "resolution");
     this.#currentTimeMsUniformPosition = currentTimeMsUniformPosition;
+    this.#resolutionUniformPosition = resolutionUniformPosition;
 
     this.#draw();
   }
@@ -79,9 +84,12 @@ class Visual {
   #draw = () => {
     const gl = this.#gl;
     const currentTimeMsUniformPosition = this.#currentTimeMsUniformPosition;
+    const resolutionUniformPosition = this.#resolutionUniformPosition;
     const currentTimeMs = Date.now();
+    const resolution = this.#resolution;
 
     gl.uniform1ui(currentTimeMsUniformPosition, currentTimeMs);
+    gl.uniform2fv(resolutionUniformPosition, resolution);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
     gl.flush();
   }
