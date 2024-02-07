@@ -20,26 +20,38 @@
       }
     </style>
     <script id="vertex-shader" type="x-shader/x-vertex">
-      attribute vec2 position;
+      #version 300 es
 
-      void main(void) {
+      in vec2 position;
+      uniform uint currentTimeMs;
+      flat out uint vCurrentTimeMs;
+
+      void main() {
+        vCurrentTimeMs = currentTimeMs;
         gl_Position = vec4(position, 0.0, 1.0);
       }
     </script>
     <script id="fragment-shader-01" type="x-shader/x-fragment">
-      precision mediump float;
+      #version 300 es
 
-      void main(void) {
-        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      precision highp float;
+      flat in uint vCurrentTimeMs;
+      out vec4 outColor;
+
+      void main() {
+        float progress = float(vCurrentTimeMs % uint(1000)) / 1000.0;
+
+        outColor = vec4(progress, 0.0, 0.0, 1.0);
       }
     </script>
     <script src="./visual_base.js"></script>
     <script>
       window.addEventListener('load', () => {
-        const vertexShaderSourceCode = document.getElementById("vertex-shader").text;
-        const fragmentShaderSourceCode = document.getElementById("fragment-shader-01").text;
+        const vertexShaderSourceCode = document.getElementById("vertex-shader").text.trim();
+        const fragmentShaderSourceCode = document.getElementById("fragment-shader-01").text.trim();
         const visual = new Visual();
         visual.setShaderSourceCode(vertexShaderSourceCode, fragmentShaderSourceCode);
+        visual.run();
       });
     </script>
   </head>

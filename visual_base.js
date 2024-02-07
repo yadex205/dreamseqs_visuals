@@ -2,10 +2,13 @@
 
 class Visual {
   #gl;
+  #currentTimeMsUniformPosition;
+  #intervalHandle = 0;
+  #animationFrameHandle = 0;
 
   constructor() {
     const canvasEl = document.getElementById("canvas");
-    const gl = canvasEl.getContext('webgl');
+    const gl = canvasEl.getContext('webgl2');
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.clearDepth(1.0);
@@ -39,17 +42,47 @@ class Visual {
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
-    gl.flush();
+    const currentTimeMsUniformPosition = gl.getUniformLocation(program, "currentTimeMs");
+    this.#currentTimeMsUniformPosition = currentTimeMsUniformPosition;
+
+    this.#draw();
+  }
+
+  run = () => {
+    const fps = 30;
+    const interval = 1000 / 30;
+
+    window.clearInterval(this.#intervalHandle);
+
+    this.#intervalHandle = window.setInterval(() => {
+      window.cancelAnimationFrame(this.#animationFrameHandle);
+      this.#animationFrameHandle = window.requestAnimationFrame(this.#draw);
+    }, interval);
   }
 
   #createShader = (glShaderType, shaderSourceCode) => {
     const gl = this.#gl;
 
+    console.debug(`Compile ${glShaderType === gl.VERTEX_SHADER ? "vertex" : "fragment"} shader`)
+
     const shader = gl.createShader(glShaderType);
     gl.shaderSource(shader, shaderSourceCode);
     gl.compileShader(shader);
 
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.error(gl.getShaderInfoLog(shader));
+    }
+
     return shader;
+  }
+
+  #draw = () => {
+    const gl = this.#gl;
+    const currentTimeMsUniformPosition = this.#currentTimeMsUniformPosition;
+    const currentTimeMs = Date.now();
+
+    gl.uniform1ui(currentTimeMsUniformPosition, currentTimeMs);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, 4);
+    gl.flush();
   }
 }
