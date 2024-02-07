@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>dreamseqs visuals</title>
+    <style>
+      html {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      canvas {
+        width: 960px;
+        height: 540px;
+        background-color: #000000;
+      }
+    </style>
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      attribute vec2 position;
+
+      void main(void) {
+        gl_Position = vec4(position, 0.0, 1.0);
+      }
+    </script>
+    <script id="fragment-shader-01" type="x-shader/x-fragment">
+      precision mediump float;
+
+      void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+      }
+    </script>
+    <script src="./visual_base.js"></script>
+    <script>
+      window.addEventListener('load', () => {
+        const vertexShaderSourceCode = document.getElementById("vertex-shader").text;
+        const fragmentShaderSourceCode = document.getElementById("fragment-shader-01").text;
+        const visual = new Visual();
+        visual.setShaderSourceCode(vertexShaderSourceCode, fragmentShaderSourceCode);
+      });
+    </script>
+  </head>
+  <body>
+    <canvas class="canvas" id="canvas" width="1920" height="1080"></canvas>
+  </body>
+</html>
