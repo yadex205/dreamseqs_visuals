@@ -54,8 +54,8 @@ class Visual {
   }
 
   run = () => {
-    const fps = 30;
-    const interval = 1000 / 30;
+    const fps = 60;
+    const interval = 1000 / fps;
 
     window.clearInterval(this.#intervalHandle);
 
