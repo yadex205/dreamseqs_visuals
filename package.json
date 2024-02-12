@@ -1,0 +1,21 @@
+{
+  "name": "dreamseqs_visuals",
+  "version": "0.0.1",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yadex205/dreamseqs_visuals.git"
+  },
+  "author": "Kanon Kakuno <yadex205@yadex205.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/yadex205/dreamseqs_visuals/issues"
+  },
+  "homepage": "https://github.com/yadex205/dreamseqs_visuals#readme",
+  "scripts": {
+    "start": "browser-sync start --config browser-sync.js"
+  },
+  "devDependencies": {
+    "browser-sync": "^3.0.2"
+  }
+}
