@@ -59,10 +59,11 @@ class Visual {
 
     window.clearInterval(this.#intervalHandle);
 
-    this.#intervalHandle = window.setInterval(() => {
-      window.cancelAnimationFrame(this.#animationFrameHandle);
-      this.#animationFrameHandle = window.requestAnimationFrame(this.#draw);
-    }, interval);
+    // this.#intervalHandle = window.setInterval(() => {
+      // window.cancelAnimationFrame(this.#animationFrameHandle);
+      // this.#animationFrameHandle = window.requestAnimationFrame(this.#draw);
+    // }, interval);
+    this.#intervalHandle = window.setInterval(this.#draw);
   }
 
   #createShader = (glShaderType, shaderSourceCode) => {
